@@ -1,22 +1,33 @@
-import Title from "antd/lib/typography/Title";
+import { Image } from "antd";
+import Text from 'antd/lib/typography/Text';
 import * as React from 'react';
-type ListProps = {
-    id: number,
+import { User } from "../types";
+import { OModal } from "./modal";
+type OfferListItemProps = {
+    offer: number,
     name: string,
     level: number,
     location: string,
-    coach:string,
+    coach: User,
+    time: string,
+    bookings:number[],
 }
 
 
-const List = (props:ListProps) => {
+const OfferListItem = (props: OfferListItemProps) => {
     return (
         <div>
-        <Title level={3}>
-            {props.id} & {props.name} & level : {props.level} & place : {props.location} & coach = {props.coach}
-        </Title>
+        <Text>
+            Lesson : {props.name} <br></br>
+            Level : {props.level} <br></br>
+            Place : {props.location} <br></br>
+            Coach = {props.coach.name} <br></br>
+            {props.time}
+            </Text>
+            <Image src={props.coach.photo} height={80} width={"50"}  />
+            <OModal offer={props.offer}/>
         </div>
     )
 }
 
-export { List };
+export { OfferListItem };

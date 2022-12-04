@@ -1,26 +1,32 @@
 import * as React from 'react'
 import {
     fetchCoaches,
-    fetchLocation,
-    fetchMetaActivity,
-    fetchOfferByDate,
-    Offer
+    fetchEstablishments,
+    fetchMetaActivities,
+    fetchOfferByDate
 } from '../bsportAPI'
-import { List } from './list'
+import { Offer } from '../types'
+import { OfferListItem } from './list'
 type CalendarProps = {
-    date:string
+    date: string
 }
 export const Calendar = (props: CalendarProps) => {
     const [offers, setOffers] = React.useState<Offer[]>()
+    const [date, setDate] = React.useState(props.date)
     const [loading, setLoading] = React.useState(true)
     const [mapMetaActivities, setMapMetaActivities] = React.useState<{ [metaActivity: number]: string }>({})
     const [mapLocation, setMapLocation] = React.useState<{ [establishment: number]: string }>({})
-    const [mapCoach, setMapCoach] = React.useState<{ [coach: number]: string }>({})
-    React.useEffect(()=> {
+    const [mapCoach, setMapCoach] = React.useState<{ [coach: number]: { name: string, photo: string } }>({})
+    // eslint-disable-next-line
+    React.useEffect(() => {
+        if (props.date !== date) {
+            setDate(props.date)
+            setLoading(true)
+        }
         async function fetchOffers() {
             const fetchedOffers = await fetchOfferByDate(props.date, props.date)
-            const metaActivities = await fetchMetaActivity(fetchedOffers)
-            const locations = await fetchLocation(fetchedOffers)
+            const metaActivities = await fetchMetaActivities(fetchedOffers)
+            const locations = await fetchEstablishments(fetchedOffers)
             const coaches = await fetchCoaches(fetchedOffers)
             setLoading(false)
             setOffers(fetchedOffers)
@@ -31,6 +37,7 @@ export const Calendar = (props: CalendarProps) => {
         }
         if (loading) {
             fetchOffers()
+            setDate(date)
         }
     })
     return (
@@ -38,11 +45,14 @@ export const Calendar = (props: CalendarProps) => {
         {!loading && offers && (
                 Object.values(offers).map((offer, index) => {
                 return (
-                    <List id={offer.id}
+                    <OfferListItem
+                        offer={offer.id}
                         name={mapMetaActivities[offer.meta_activity]}
                         level={offer.level}
-                        location={mapLocation[offer.establishment]}
-                        coach = {mapCoach[offer.coach]}
+                        location={mapLocation[offer.establishment]||""}
+                        coach={mapCoach[offer.coach]}
+                        time={"Starting at " + offer.date_start.slice(11, 19) + " for " + offer.duration_minute + "min"}
+                        bookings={offer.bookings}
                         key={index} />
                 )
             })

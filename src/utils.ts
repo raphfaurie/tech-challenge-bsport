@@ -14,9 +14,10 @@ export const getRequest = async (endpoint: string, params?: string[][]): Promise
 }
 
 export const todayDate = (): string => {
-	const now = new Date()
+    const now = new Date()
+    console.log(now)
 	const dd = now.getDate().toString().padStart(2, '0')
-	const mm = now.getMonth().toString().padStart(2, '0')
+	const mm = (now.getMonth() + 1).toString().padStart(2, '0')
 	const yyyy = now.getFullYear().toString()
 	return [yyyy,mm,dd].join("-")
 }
