@@ -2,7 +2,7 @@ import { Button, Modal } from "antd";
 import Text from 'antd/lib/typography/Text';
 import Title from "antd/lib/typography/Title";
 import * as React from 'react';
-import { fetchMembersByOffer } from "../bsportAPI";
+import { fetchMembersByOffer } from "../service/bsportAPI";
 import { User } from "../types";
 
 type OModalProps = {
@@ -12,10 +12,16 @@ export const OModal = (props: OModalProps) => {
     const [loading, setLoading] = React.useState(true)
     const [members,setMembers] = React.useState<User[]>()
     React.useEffect(() => {
+        // Lists the lesson participants and their full name.
         async function listMembers() {
-            const fetchedMembers = await fetchMembersByOffer(props.offer)
-            setMembers(fetchedMembers)
+            try {
+                const fetchedMembers = await fetchMembersByOffer(props.offer)
+                setMembers(fetchedMembers)
+            } catch (err) {
+                console.log(err)
+            }
             setLoading(false)
+            
         }
 
         if (loading && props.offer) {
@@ -26,9 +32,6 @@ export const OModal = (props: OModalProps) => {
     const showModal = () => {
         setIsModalOpen(true);
     };
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
     const handleCancel = () => {
         setIsModalOpen(false);
     };
@@ -37,7 +40,7 @@ export const OModal = (props: OModalProps) => {
         <Button type="primary" onClick={showModal}>
             Display information
             </Button>
-            <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+            <Modal title="Lesson information" open={isModalOpen} onCancel={handleCancel} footer={null}>
                 <Title level={4}>
                     Participants
                 </Title>
@@ -45,9 +48,9 @@ export const OModal = (props: OModalProps) => {
                     (members.length !== 0) ? (
                         Object.values(members).map((member, index) => {
                             return (    
-                                <Title level={2} key={index}>
-                                    {member.name.toLowerCase()}
-                                </Title>    
+                                <Text key={index}>
+                                    {member.name.toLowerCase()} <br></br>
+                                </Text>    
                                 )
                             })
                         ) :

@@ -1,4 +1,5 @@
 const _authToken = " Token f18688960a8942c83d238b04e88389ac126bf55c"
+// https://api.staging.bsport.io/api/v1/swagger/
 const _baseURL = "https://api.staging.bsport.io/api/v1"
 
 // Build the 'GET' request with the provided params and targets the provided endpoint.
@@ -13,9 +14,9 @@ export const getRequest = async (endpoint: string, params?: string[][]): Promise
     })
 }
 
+// Gets today's date and format in the Bsport API way.
 export const todayDate = (): string => {
     const now = new Date()
-    console.log(now)
 	const dd = now.getDate().toString().padStart(2, '0')
 	const mm = (now.getMonth() + 1).toString().padStart(2, '0')
 	const yyyy = now.getFullYear().toString()
